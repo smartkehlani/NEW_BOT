@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mining</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="material/css/styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+    
+ #balance-container, #mining-container {
+            margin: 20px;
+            font-size: 18px;
+        }
+
+        .button {
+            background-color: #ffffff;
+            color: rgb(0, 0, 0);
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+            margin: 10px;
+        }
+
+        .button:hover {
+            background-color: #a2aaa0;
+        }
+
+        .upgrade-info {
+            margin: 20px;
+            font-size: 16px;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="balance-container">
+        <h2>💎 Total $ANG: <span id="balance">0</span></h2>
+    </div>
+
+    <div id="mining-container">
+        <h3>⛏️ Mining $ANG</h3>
+        <p id="daily-mining-rate">Current Mining Rate: 200 $ANG/day</p>
+        <button class="button" onclick="mineANG()">Mine Now</button>
+    </div>
+
+    <div id="upgrade-container">
+        <h3>⚡ Upgrade Mining Capacity</h3>
+        <p class="upgrade-info">Spend 3000 $ANG to increase mining by +300 $ANG/day</p>
+        <button class="button" onclick="upgradeMining(3000, 300)">Upgrade +300</button>
+
+        <p class="upgrade-info">Spend 1000 $ANG to increase mining by +100 $ANG/day</p>
+        <button class="button" onclick="upgradeMining(1000, 100)">Upgrade +100</button>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="home.html" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span>HOME</span>
+        </a>
+        <a href="leaderboard.html" class="nav-item">
+            <i class="fas fa-trophy"></i>
+            <span>LEADERBOARD</span>
+        </a>
+        <a href="invite.html" class="nav-item">
+            <i class="fas fa-user-friends"></i>
+            <span>INVITE</span>
+        </a>
+        <a href="task.html" class="nav-item">
+            <i class="fas fa-tasks"></i>
+            <span>TASKS</span>
+        </a>
+    </nav>
+
+    <script>
+        // Load balance and mining rate from localStorage
+        let balance = parseInt(localStorage.getItem("balance") || "0", 10);
+        let miningRate = parseInt(localStorage.getItem("miningRate") || "200", 10);
+
+        // Update DOM elements
+        document.getElementById("balance").textContent = balance;
+        document.getElementById("daily-mining-rate").textContent = `Current Mining Rate: ${miningRate} $ANG/day`;
+
+        // Function to mine ANG
+       function mineANG() {
+    const now = new Date();
+    const lastMined = new Date(localStorage.getItem("lastMined") || 0);
+
+    const oneDay = 24 * 60 * 60 * 1000;
+    if (now - lastMined >= oneDay) {
+        balance += miningRate;
+        localStorage.setItem("balance", balance);
+        localStorage.setItem("lastMined", now);
+        document.getElementById("balance").textContent = balance;
+        alert(`You mined ${miningRate} $ANG!`);
+    } else {
+        const timeLeft = Math.ceil((oneDay - (now - lastMined)) / (60 * 60 * 1000)); // Convert to hours
+        alert(`You can mine again in ${timeLeft} hours.`);
+    }
+}
+
+
+        // Function to upgrade mining rate
+        function upgradeMining(cost, increase) {
+            if (balance >= cost) {
+                balance -= cost;
+                miningRate += increase;
+                localStorage.setItem("balance", balance);
+                localStorage.setItem("miningRate", miningRate);
+                document.getElementById("balance").textContent = balance;
+                document.getElementById("daily-mining-rate").textContent = `Current Mining Rate: ${miningRate} $ANG/day`;
+                alert(`Mining capacity upgraded by ${increase} $ANG/day!`);
+            } else {
+                alert("Insufficient $ANG for this upgrade.");
+            }
+        }
+    </script>
+</body>
+</html>
